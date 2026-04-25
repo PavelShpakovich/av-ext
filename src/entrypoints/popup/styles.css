@@ -320,13 +320,17 @@ select:focus-visible {
 }
 
 .select-shell::after {
-  content: '⌄';
+  content: '';
   position: absolute;
   top: 50%;
-  right: 14px;
-  transform: translateY(-52%);
-  font-size: 16px;
-  color: var(--muted);
+  right: 18px;
+  width: 8px;
+  height: 8px;
+  border-right: 1.5px solid rgba(93, 109, 129, 0.9);
+  border-bottom: 1.5px solid rgba(93, 109, 129, 0.9);
+  transform: translateY(-70%) rotate(45deg);
+  transform-origin: center;
+  opacity: 0.9;
   pointer-events: none;
 }
 
