@@ -1,0 +1,39 @@
+{
+  "name": "avby-currency-ext",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Chrome extension that shows BYN prices on av.by next to USD listings using NBRB or selected Belarus bank rates.",
+  "scripts": {
+    "dev": "wxt",
+    "build": "wxt build --browser chrome",
+    "zip": "wxt zip --browser chrome",
+    "postinstall": "wxt prepare",
+    "lint": "eslint 'src/**/*.{ts,tsx}' wxt.config.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "jest"
+  },
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.25.1",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@types/jest": "^29.5.14",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "@typescript-eslint/eslint-plugin": "^8.31.1",
+    "@typescript-eslint/parser": "^8.31.1",
+    "@wxt-dev/module-react": "^1.1.5",
+    "eslint": "^9.25.1",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "ts-jest": "^29.4.0",
+    "typescript-eslint": "^8.31.1",
+    "typescript": "^5.8.3",
+    "wxt": "^0.20.18"
+  }
+}

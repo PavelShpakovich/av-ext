@@ -1,0 +1,24 @@
+import { defineConfig } from 'wxt';
+
+export default defineConfig({
+  modules: ['@wxt-dev/module-react'],
+  srcDir: 'src',
+  outDir: 'build',
+  manifestVersion: 3,
+  manifest: {
+    name: 'AV.BY Цены в долларах',
+    description: 'Показывает цены в долларах рядом с суммами в BYN на av.by по курсу НБРБ или выбранного банка.',
+    version: '0.1.0',
+    permissions: ['storage', 'tabs', 'alarms'],
+    host_permissions: ['https://*.av.by/*', 'https://api.nbrb.by/*', 'https://myfin.by/*'],
+    action: {
+      default_title: 'AV.BY Цены в долларах',
+      default_popup: 'popup.html',
+    },
+  },
+  vite: () => ({
+    build: {
+      target: 'esnext',
+    },
+  }),
+});
