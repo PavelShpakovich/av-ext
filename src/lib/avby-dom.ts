@@ -110,7 +110,8 @@ function ensureInjectedStyle(doc: Document): void {
       border-color: rgba(193, 118, 25, 0.45);
     }
     [class*="banner"] .${INJECTED_BADGE_CLASS},
-    [class*="Banner"] .${INJECTED_BADGE_CLASS} {
+    [class*="Banner"] .${INJECTED_BADGE_CLASS},
+    [class*="salon-listing-top"] .${INJECTED_BADGE_CLASS} {
       color: #fff;
       background: rgba(255, 255, 255, 0.22);
       border-color: rgba(255, 255, 255, 0.5);
