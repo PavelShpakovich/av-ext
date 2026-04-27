@@ -74,15 +74,9 @@ export default function App() {
         <div className='hero-copy'>
           <p className='eyebrow'>AV.BY helper</p>
           <h1>Цены в долларах без калькулятора</h1>
-          <p className='hero-description'>
-            Расширение показывает примерную цену в USD прямо рядом с суммой в BYN на страницах av.by.
-          </p>
         </div>
 
         <div className='hero-aside'>
-          <span className={`status-pill ${settings.enabled ? 'is-on' : 'is-off'}`}>
-            {settings.enabled ? 'Активно' : 'Выключено'}
-          </span>
           <label className='toggle-card'>
             <span className='toggle-copy'>
               <strong>Показывать USD на av.by</strong>

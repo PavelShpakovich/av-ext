@@ -154,7 +154,6 @@ input[type='checkbox'] {
   gap: 12px;
 }
 
-.status-pill,
 .badge-outline,
 .live-dot {
   display: inline-flex;
@@ -167,16 +166,6 @@ input[type='checkbox'] {
   font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-}
-
-.status-pill.is-on {
-  background: rgba(115, 255, 204, 0.12);
-  color: #a5f3d5;
-}
-
-.status-pill.is-off {
-  background: rgba(255, 255, 255, 0.12);
-  color: rgba(246, 243, 238, 0.78);
 }
 
 .toggle-card,
