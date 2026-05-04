@@ -111,10 +111,12 @@ function ensureInjectedStyle(doc: Document): void {
     }
     [class*="banner"] .${INJECTED_BADGE_CLASS},
     [class*="Banner"] .${INJECTED_BADGE_CLASS},
-    [class*="salon-listing-top"] .${INJECTED_BADGE_CLASS} {
+    [class*="salon-listing-top"] .${INJECTED_BADGE_CLASS},
+    .fullscreen-gallery__price .${INJECTED_BADGE_CLASS} {
       color: #fff;
       background: rgba(255, 255, 255, 0.22);
       border-color: rgba(255, 255, 255, 0.5);
+      margin-right: 8px;
     }
     @media (prefers-color-scheme: dark) {
       .${INJECTED_BADGE_CLASS} {
