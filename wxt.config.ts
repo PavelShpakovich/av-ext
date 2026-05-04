@@ -8,7 +8,7 @@ export default defineConfig({
   manifest: {
     name: 'AV.BY Цены в долларах',
     description: 'Показывает цены в долларах рядом с суммами в BYN на av.by по курсу НБРБ или выбранного банка.',
-    version: '0.2.1',
+    version: '0.2.2',
     permissions: ['storage', 'tabs', 'alarms'],
     host_permissions: ['https://*.av.by/*', 'https://api.nbrb.by/*', 'https://myfin.by/*'],
     icons: {
