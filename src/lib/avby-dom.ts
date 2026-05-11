@@ -33,10 +33,12 @@ function buildBadgeModeStyles(cls: string, app: BadgeAppearance, theme: 'light' 
     }`;
   }
   // badge (default)
+  const bgAlpha = theme === 'dark' ? 0.55 : 0.14;
+  const borderAlpha = theme === 'dark' ? 0.55 : 0.45;
   return `
     .${cls} {
-      background: ${hexToRgba(backgroundColor, 0.14)};
-      border-color: ${hexToRgba(backgroundColor, 0.45)};
+      background: ${hexToRgba(backgroundColor, bgAlpha)};
+      border-color: ${hexToRgba(backgroundColor, borderAlpha)};
       color: ${textColor};
     }`;
 }
@@ -194,12 +196,12 @@ function ensureInjectedStyle(doc: Document, badgeApp: BadgeAppearance, bannerApp
     ${buildBannerModeStyles(cls, bannerApp, 'light')}
     @media (prefers-color-scheme: dark) {
       ${buildBadgeModeStyles(cls, badgeApp, 'dark')}
+      ${buildBannerModeStyles(cls, bannerApp, 'dark')}
       .${cls}[data-stale="true"] {
         background: rgba(120, 70, 10, 0.55);
         color: #ffe4bf;
         border-color: rgba(220, 150, 60, 0.55);
       }
-      ${buildBannerModeStyles(cls, bannerApp, 'dark')}
     }
   `;
 
