@@ -1,7 +1,15 @@
 import { useEffect, useState } from 'react';
 import { MessageActionType } from '../../types';
 import { formatUpdatedAt } from '../../lib/format';
-import type { ActiveRate, BankRate, MessageAction, MessageResponse, UserSettings } from '../../types';
+import type {
+  ActiveRate,
+  BadgeAppearance,
+  BadgeDisplayMode,
+  BankRate,
+  MessageAction,
+  MessageResponse,
+  UserSettings,
+} from '../../types';
 
 async function sendMessage<T>(message: MessageAction): Promise<T> {
   const response = (await browser.runtime.sendMessage(message)) as MessageResponse<T>;
@@ -9,6 +17,88 @@ async function sendMessage<T>(message: MessageAction): Promise<T> {
     throw new Error(response.error);
   }
   return response.data;
+}
+
+const DISPLAY_MODE_LABELS: Record<BadgeDisplayMode, string> = {
+  badge: 'Бейдж (фон + рамка + текст)',
+  outline: 'Контур (рамка + текст)',
+  text: 'Только текст',
+};
+
+interface AppearanceSectionProps {
+  label: string;
+  value: BadgeAppearance;
+  onChange: (next: BadgeAppearance) => void;
+}
+
+function AppearanceSection({ label, value, onChange }: AppearanceSectionProps) {
+  const update = (patch: Partial<BadgeAppearance>) => onChange({ ...value, ...patch });
+  const updateLight = (patch: Partial<BadgeAppearance['light']>) => update({ light: { ...value.light, ...patch } });
+  const updateDark = (patch: Partial<BadgeAppearance['dark']>) => update({ dark: { ...value.dark, ...patch } });
+
+  return (
+    <div className='appearance-group'>
+      <p className='field-label appearance-group-label'>{label}</p>
+
+      <label className='control-group'>
+        <span className='field-label'>Режим отображения</span>
+        <span className='select-shell'>
+          <select value={value.mode} onChange={(e) => update({ mode: e.target.value as BadgeDisplayMode })}>
+            {(Object.entries(DISPLAY_MODE_LABELS) as [BadgeDisplayMode, string][]).map(([k, v]) => (
+              <option key={k} value={k}>
+                {v}
+              </option>
+            ))}
+          </select>
+        </span>
+      </label>
+
+      <div className='color-theme-row'>
+        <div className='color-picker-group'>
+          <p className='field-label'>Светлая тема</p>
+          <label className='color-picker-row'>
+            <span>Текст</span>
+            <input
+              type='color'
+              value={value.light.textColor}
+              onChange={(e) => updateLight({ textColor: e.target.value })}
+            />
+          </label>
+          {value.mode !== 'text' && (
+            <label className='color-picker-row'>
+              <span>Фон / рамка</span>
+              <input
+                type='color'
+                value={value.light.backgroundColor}
+                onChange={(e) => updateLight({ backgroundColor: e.target.value })}
+              />
+            </label>
+          )}
+        </div>
+        <div className='color-picker-group'>
+          <p className='field-label'>Тёмная тема</p>
+          <label className='color-picker-row'>
+            <span>Текст</span>
+            <input
+              type='color'
+              value={value.dark.textColor}
+              onChange={(e) => updateDark({ textColor: e.target.value })}
+            />
+          </label>
+          {value.mode !== 'text' && (
+            <label className='color-picker-row'>
+              <span>Фон / рамка</span>
+              <input
+                type='color'
+                value={value.dark.backgroundColor}
+                onChange={(e) => updateDark({ backgroundColor: e.target.value })}
+              />
+            </label>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function App() {
@@ -158,6 +248,29 @@ export default function App() {
             </span>
           </span>
         </label>
+      </section>
+
+      <section className='panel panel-grid'>
+        <div className='panel-heading'>
+          <div>
+            <p className='section-kicker'>Оформление</p>
+            <h2>Внешний вид значка</h2>
+          </div>
+        </div>
+
+        <AppearanceSection
+          label='Обычный значок'
+          value={settings.badgeAppearance}
+          onChange={(next) => saveSettings({ badgeAppearance: next })}
+        />
+
+        <div className='appearance-divider' />
+
+        <AppearanceSection
+          label='Значок на баннерах'
+          value={settings.bannerAppearance}
+          onChange={(next) => saveSettings({ bannerAppearance: next })}
+        />
       </section>
 
       <section className='panel metrics-panel'>

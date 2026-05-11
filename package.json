@@ -1,6 +1,6 @@
 {
   "name": "avby-currency-ext",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "private": true,
   "description": "Chrome extension that shows BYN prices on av.by next to USD listings using NBRB or selected Belarus bank rates.",
   "scripts": {

@@ -1,6 +1,10 @@
 import { avbySampleHtml } from './fixtures/avby-sample';
 import { clearInjectedPrices, decoratePrices, parseBynAmount } from '../lib/avby-dom';
+import { DEFAULT_BADGE_APPEARANCE, DEFAULT_BANNER_APPEARANCE } from '../constants';
 import type { ActiveRate } from '../types';
+
+const dp = (root: Document | HTMLElement, roundToWholeByn: boolean) =>
+  decoratePrices(root, rate, roundToWholeByn, DEFAULT_BADGE_APPEARANCE, DEFAULT_BANNER_APPEARANCE);
 
 const rate: ActiveRate = {
   value: 2.8192,
@@ -54,20 +58,20 @@ describe('parseBynAmount', () => {
 describe('av.by classic', () => {
   it('decorates h1.card-price and div.listing-price', () => {
     document.body.innerHTML = avbySampleHtml;
-    expect(decoratePrices(document, rate, true)).toBe(2);
+    expect(dp(document, true)).toBe(2);
     expect(document.querySelectorAll('.avby-currency-helper-badge')).toHaveLength(2);
   });
 
   it('does not duplicate on re-run', () => {
     document.body.innerHTML = avbySampleHtml;
-    decoratePrices(document, rate, true);
-    expect(decoratePrices(document, rate, true)).toBe(0);
+    dp(document, true);
+    expect(dp(document, true)).toBe(0);
     expect(document.querySelectorAll('.avby-currency-helper-badge')).toHaveLength(2);
   });
 
   it('clears all injected elements', () => {
     document.body.innerHTML = avbySampleHtml;
-    decoratePrices(document, rate, true);
+    dp(document, true);
     clearInjectedPrices(document);
     expect(document.querySelectorAll('.avby-currency-helper-badge')).toHaveLength(0);
   });
@@ -91,7 +95,7 @@ describe('salon.av.by main page — salon-listing-top', () => {
         <div class="salon-listing-top__summary"></div>
       </a>
     `;
-    expect(decoratePrices(document, rate, true)).toBe(1);
+    expect(dp(document, true)).toBe(1);
     expect(document.querySelector('.salon-listing-top__prices > .avby-currency-helper-badge')).not.toBeNull();
   });
 });
@@ -115,7 +119,7 @@ describe('salon.av.by model listing — salon-listing-items', () => {
         </li>
       </div>
     `;
-    expect(decoratePrices(document, rate, true)).toBe(1);
+    expect(dp(document, true)).toBe(1);
     expect(document.querySelector('.salon-listing-items__item-price-byn > .avby-currency-helper-badge')).not.toBeNull();
   });
 
@@ -135,7 +139,7 @@ describe('salon.av.by model listing — salon-listing-items', () => {
         </li>
       </div>
     `;
-    expect(decoratePrices(document, rate, true)).toBe(1);
+    expect(dp(document, true)).toBe(1);
     expect(document.querySelector('.salon-listing-items__item-price-byn > .avby-currency-helper-badge')).not.toBeNull();
   });
 });
@@ -155,7 +159,7 @@ describe('salon.av.by tile listing — salon-listing-tile', () => {
         </div>
       </div>
     `;
-    expect(decoratePrices(document, rate, true)).toBe(1);
+    expect(dp(document, true)).toBe(1);
     expect(document.querySelector('.salon-listing-tile__item-price > .avby-currency-helper-badge')).not.toBeNull();
   });
 });
@@ -172,7 +176,7 @@ describe('salon.av.by detail page — listing-item__price-primary', () => {
         </div>
       </div>
     `;
-    expect(decoratePrices(document, rate, true)).toBe(1);
+    expect(dp(document, true)).toBe(1);
     expect(document.querySelector('.listing-item__price-primary > .avby-currency-helper-badge')).not.toBeNull();
   });
 });
@@ -186,7 +190,7 @@ describe('banner context', () => {
         <div class="listing-price">28 158 р.</div>
       </div>
     `;
-    expect(decoratePrices(document, rate, true)).toBe(1);
+    expect(dp(document, true)).toBe(1);
     // Badge should exist inside the banner ancestor
     const badge = document.querySelector('.avby-currency-helper-badge');
     expect(badge).not.toBeNull();
@@ -202,7 +206,7 @@ describe('currency converter rejection', () => {
       <div class="converter-price">1 USD = 2.82 BYN</div>
       <div class="listing-price">28 158 BYN</div>
     `;
-    expect(decoratePrices(document, rate, true)).toBe(1);
+    expect(dp(document, true)).toBe(1);
     expect(document.body.textContent).not.toContain('≈ $1');
   });
 });
@@ -218,7 +222,7 @@ describe('re-injection after framework removal', () => {
       </div>
     `;
 
-    decoratePrices(document, rate, true);
+    dp(document, true);
     expect(document.querySelectorAll('.avby-currency-helper-badge')).toHaveLength(1);
 
     // Simulate framework removing our badge
@@ -226,7 +230,7 @@ describe('re-injection after framework removal', () => {
     expect(document.querySelectorAll('.avby-currency-helper-badge')).toHaveLength(0);
 
     // Must re-inject
-    expect(decoratePrices(document, rate, true)).toBe(1);
+    expect(dp(document, true)).toBe(1);
     expect(document.querySelectorAll('.avby-currency-helper-badge')).toHaveLength(1);
   });
 });
@@ -251,7 +255,7 @@ describe('full page with multiple price types', () => {
         </div>
       </main>
     `;
-    expect(decoratePrices(document, rate, true)).toBe(4);
+    expect(dp(document, true)).toBe(4);
     expect(document.querySelectorAll('.avby-currency-helper-badge')).toHaveLength(4);
   });
 });

@@ -45,12 +45,24 @@ export default defineContentScript({
         return;
       }
 
-      decoratePrices(document, activeRate, settings.roundToWholeByn);
+      decoratePrices(
+        document,
+        activeRate,
+        settings.roundToWholeByn,
+        settings.badgeAppearance,
+        settings.bannerAppearance,
+      );
     };
 
     const debouncedRerender = debounce(() => {
       if (activeRate && settings?.enabled) {
-        decoratePrices(document, activeRate, settings.roundToWholeByn);
+        decoratePrices(
+          document,
+          activeRate,
+          settings.roundToWholeByn,
+          settings.badgeAppearance,
+          settings.bannerAppearance,
+        );
       }
     }, 120);
 

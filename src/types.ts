@@ -1,5 +1,18 @@
 export type RateSourceType = 'nbrb' | 'bank';
 
+export type BadgeDisplayMode = 'badge' | 'outline' | 'text';
+
+export interface BadgeThemeColors {
+  textColor: string;
+  backgroundColor: string;
+}
+
+export interface BadgeAppearance {
+  mode: BadgeDisplayMode;
+  light: BadgeThemeColors;
+  dark: BadgeThemeColors;
+}
+
 export interface BankRate {
   alias: string;
   name: string;
@@ -23,6 +36,8 @@ export interface UserSettings {
   selectedBankAlias: string | null;
   cacheTtlMs: number;
   roundToWholeByn: boolean;
+  badgeAppearance: BadgeAppearance;
+  bannerAppearance: BadgeAppearance;
 }
 
 export interface ActiveRate {

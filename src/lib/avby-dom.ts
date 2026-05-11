@@ -1,6 +1,84 @@
 import { INJECTED_BADGE_CLASS, INJECTED_STYLE_ID } from '../constants';
 import { formatUsdAmount } from './format';
-import type { ActiveRate } from '../types';
+import type { ActiveRate, BadgeAppearance } from '../types';
+
+function hexToRgba(hex: string, alpha: number): string {
+  const h = hex.replace('#', '');
+  const r = parseInt(h.slice(0, 2), 16);
+  const g = parseInt(h.slice(2, 4), 16);
+  const b = parseInt(h.slice(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+function buildBadgeModeStyles(cls: string, app: BadgeAppearance, theme: 'light' | 'dark'): string {
+  const colors = app[theme];
+  const { textColor, backgroundColor } = colors;
+  const { mode } = app;
+
+  if (mode === 'text') {
+    return `
+    .${cls} {
+      background: none;
+      border: none;
+      padding: 0;
+      color: ${textColor};
+    }`;
+  }
+  if (mode === 'outline') {
+    return `
+    .${cls} {
+      background: transparent;
+      border-color: ${hexToRgba(backgroundColor, 0.7)};
+      color: ${textColor};
+    }`;
+  }
+  // badge (default)
+  return `
+    .${cls} {
+      background: ${hexToRgba(backgroundColor, 0.14)};
+      border-color: ${hexToRgba(backgroundColor, 0.45)};
+      color: ${textColor};
+    }`;
+}
+
+function buildBannerModeStyles(cls: string, app: BadgeAppearance, theme: 'light' | 'dark'): string {
+  const colors = app[theme];
+  const { textColor, backgroundColor } = colors;
+  const { mode } = app;
+  const selectors = [
+    `[class*="banner"] .${cls}`,
+    `[class*="Banner"] .${cls}`,
+    `[class*="salon-listing-top"] .${cls}`,
+    `.fullscreen-gallery__price .${cls}`,
+  ].join(',\n    ');
+
+  if (mode === 'text') {
+    return `
+    ${selectors} {
+      background: none;
+      border: none;
+      padding: 0;
+      color: ${textColor};
+    }`;
+  }
+  if (mode === 'outline') {
+    return `
+    ${selectors} {
+      background: transparent;
+      border-color: ${hexToRgba(backgroundColor, 0.7)};
+      color: ${textColor};
+      margin-right: 8px;
+    }`;
+  }
+  // badge
+  return `
+    ${selectors} {
+      color: ${textColor};
+      background: ${hexToRgba(backgroundColor, 0.22)};
+      border-color: ${hexToRgba(backgroundColor, 0.5)};
+      margin-right: 8px;
+    }`;
+}
 
 /**
  * BYN price regex:
@@ -83,55 +161,51 @@ export function findPriceHosts(root: ParentNode = document): HTMLElement[] {
   return Array.from(hosts);
 }
 
-function ensureInjectedStyle(doc: Document): void {
-  if (doc.getElementById(INJECTED_STYLE_ID)) return;
+function ensureInjectedStyle(doc: Document, badgeApp: BadgeAppearance, bannerApp: BadgeAppearance): void {
+  const styleKey = JSON.stringify({ b: badgeApp, n: bannerApp });
+  const existing = doc.getElementById(INJECTED_STYLE_ID);
+  if (existing?.dataset.key === styleKey) return;
 
-  const style = doc.createElement('style');
+  const style = existing ?? doc.createElement('style');
   style.id = INJECTED_STYLE_ID;
+  style.dataset.key = styleKey;
+
+  const cls = INJECTED_BADGE_CLASS;
   style.textContent = `
-    .${INJECTED_BADGE_CLASS} {
+    .${cls} {
       display: block;
       width: fit-content;
       margin-top: 4px;
       padding: 2px 8px;
       border-radius: 4px;
-      background: rgba(93, 143, 46, 0.14);
-      color: #2d4a10;
-      border: 1.5px solid rgba(93, 143, 46, 0.45);
+      border: 1.5px solid transparent;
       font-size: 0.75em;
       font-weight: 600;
       line-height: 1.4;
       white-space: nowrap;
       order: 999;
     }
-    .${INJECTED_BADGE_CLASS}[data-stale="true"] {
+    ${buildBadgeModeStyles(cls, badgeApp, 'light')}
+    .${cls}[data-stale="true"] {
       background: rgba(193, 118, 25, 0.14);
       color: #6b3d09;
       border-color: rgba(193, 118, 25, 0.45);
     }
-    [class*="banner"] .${INJECTED_BADGE_CLASS},
-    [class*="Banner"] .${INJECTED_BADGE_CLASS},
-    [class*="salon-listing-top"] .${INJECTED_BADGE_CLASS},
-    .fullscreen-gallery__price .${INJECTED_BADGE_CLASS} {
-      color: #fff;
-      background: rgba(255, 255, 255, 0.22);
-      border-color: rgba(255, 255, 255, 0.5);
-      margin-right: 8px;
-    }
+    ${buildBannerModeStyles(cls, bannerApp, 'light')}
     @media (prefers-color-scheme: dark) {
-      .${INJECTED_BADGE_CLASS} {
-        background: rgba(60, 100, 20, 0.55);
-        color: #d4f0a0;
-        border-color: rgba(150, 210, 80, 0.55);
-      }
-      .${INJECTED_BADGE_CLASS}[data-stale="true"] {
+      ${buildBadgeModeStyles(cls, badgeApp, 'dark')}
+      .${cls}[data-stale="true"] {
         background: rgba(120, 70, 10, 0.55);
         color: #ffe4bf;
         border-color: rgba(220, 150, 60, 0.55);
       }
+      ${buildBannerModeStyles(cls, bannerApp, 'dark')}
     }
   `;
-  doc.head.append(style);
+
+  if (!existing) {
+    doc.head.append(style);
+  }
 }
 
 export function clearInjectedPrices(root: ParentNode = document): void {
@@ -142,11 +216,17 @@ export function clearInjectedPrices(root: ParentNode = document): void {
   }
 }
 
-export function decoratePrices(root: Document | HTMLElement, activeRate: ActiveRate, roundToWholeByn: boolean): number {
+export function decoratePrices(
+  root: Document | HTMLElement,
+  activeRate: ActiveRate,
+  roundToWholeByn: boolean,
+  badgeApp: BadgeAppearance,
+  bannerApp: BadgeAppearance,
+): number {
   const doc = root instanceof Document ? root : root.ownerDocument;
   if (!doc) return 0;
 
-  ensureInjectedStyle(doc);
+  ensureInjectedStyle(doc, badgeApp, bannerApp);
   let injected = 0;
 
   findPriceHosts(root).forEach((element) => {

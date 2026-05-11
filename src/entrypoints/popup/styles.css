@@ -36,9 +36,9 @@ input[type='checkbox'] {
 .popup-shell {
   position: relative;
   width: 392px;
-  padding: 18px;
+  padding: 12px;
   display: grid;
-  gap: 14px;
+  gap: 10px;
   overflow: hidden;
 }
 
@@ -94,9 +94,9 @@ input[type='checkbox'] {
 
 .hero-card {
   display: grid;
-  gap: 16px;
-  padding: 18px;
-  border-radius: 28px;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 20px;
   background:
     linear-gradient(135deg, rgba(16, 32, 51, 0.98), rgba(28, 63, 71, 0.9)),
     linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0));
@@ -135,10 +135,10 @@ input[type='checkbox'] {
 }
 
 .hero-card h1 {
-  margin: 8px 0 0;
-  font-size: 28px;
-  line-height: 1.02;
-  letter-spacing: -0.04em;
+  margin: 4px 0 0;
+  font-size: 20px;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
 }
 
 .hero-description {
@@ -151,7 +151,7 @@ input[type='checkbox'] {
 
 .hero-aside {
   display: grid;
-  gap: 12px;
+  gap: 8px;
 }
 
 .badge-outline,
@@ -160,10 +160,10 @@ input[type='checkbox'] {
   align-items: center;
   justify-content: center;
   width: fit-content;
-  min-height: 28px;
-  padding: 0 12px;
+  min-height: 22px;
+  padding: 0 8px;
   border-radius: 999px;
-  font-size: 11px;
+  font-size: 10px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -177,8 +177,8 @@ input[type='checkbox'] {
 }
 
 .toggle-card {
-  padding: 14px;
-  border-radius: 22px;
+  padding: 10px;
+  border-radius: 14px;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
@@ -186,12 +186,12 @@ input[type='checkbox'] {
 .toggle-copy,
 .toggle-row > span:first-child {
   display: grid;
-  gap: 4px;
+  gap: 2px;
 }
 
 .toggle-copy strong,
 .toggle-row strong {
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .toggle-copy small,
@@ -221,11 +221,11 @@ input[type='checkbox'] {
 }
 
 .toggle-track {
-  width: 56px;
-  height: 32px;
+  width: 44px;
+  height: 26px;
   display: inline-flex;
   align-items: center;
-  padding: 4px;
+  padding: 3px;
   border-radius: 999px;
   background: rgba(17, 38, 64, 0.14);
   box-shadow: inset 0 0 0 1px rgba(17, 38, 64, 0.08);
@@ -233,8 +233,8 @@ input[type='checkbox'] {
 }
 
 .toggle-thumb {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   background: #fff;
   box-shadow: 0 4px 10px rgba(17, 38, 64, 0.18);
@@ -246,7 +246,7 @@ input[type='checkbox'] {
 }
 
 .toggle-control input:checked + .toggle-track .toggle-thumb {
-  transform: translateX(24px);
+  transform: translateX(18px);
 }
 
 .toggle-control input:focus-visible + .toggle-track,
@@ -256,30 +256,30 @@ select:focus-visible {
 }
 
 .panel {
-  padding: 16px;
-  border-radius: 24px;
+  padding: 12px;
+  border-radius: 16px;
   background: var(--card);
   border: 1px solid var(--border);
-  box-shadow: 0 18px 50px rgba(28, 47, 76, 0.09);
+  box-shadow: 0 8px 24px rgba(28, 47, 76, 0.08);
 }
 
 .panel-grid {
   display: grid;
-  gap: 14px;
+  gap: 10px;
 }
 
 .panel-heading {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 14px;
+  gap: 10px;
 }
 
 .panel-heading h2 {
-  margin: 6px 0 0;
-  font-size: 18px;
+  margin: 3px 0 0;
+  font-size: 15px;
   line-height: 1.1;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
 }
 
 .section-kicker {
@@ -327,17 +327,18 @@ select {
   width: 100%;
   appearance: none;
   border: 1px solid rgba(17, 38, 64, 0.08);
-  border-radius: 16px;
-  padding: 14px 40px 14px 14px;
+  border-radius: 10px;
+  padding: 9px 36px 9px 12px;
   background: var(--card-strong);
   color: var(--text);
   font: inherit;
+  font-size: 13px;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
 .metrics-panel {
   display: grid;
-  gap: 14px;
+  gap: 10px;
 }
 
 .live-dot {
@@ -347,9 +348,9 @@ select {
 
 .highlight-rate {
   display: grid;
-  gap: 2px;
-  padding: 16px;
-  border-radius: 20px;
+  gap: 1px;
+  padding: 10px 12px;
+  border-radius: 12px;
   background:
     linear-gradient(135deg, rgba(31, 143, 106, 0.12), rgba(31, 143, 106, 0.03)),
     rgba(255, 255, 255, 0.72);
@@ -362,9 +363,9 @@ select {
 }
 
 .highlight-rate strong {
-  font-size: 34px;
+  font-size: 24px;
   line-height: 1;
-  letter-spacing: -0.05em;
+  letter-spacing: -0.04em;
 }
 
 .highlight-meta {
@@ -375,34 +376,33 @@ select {
 .metrics-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+  gap: 8px;
 }
 
 .metric-card {
   display: grid;
-  gap: 6px;
-  min-height: 112px;
-  padding: 14px;
-  border-radius: 18px;
+  gap: 4px;
+  padding: 10px;
+  border-radius: 12px;
   background: rgba(255, 255, 255, 0.74);
   border: 1px solid rgba(17, 38, 64, 0.06);
 }
 
 .metric-card > span {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--muted);
 }
 
 .metric-card strong {
-  font-size: 15px;
+  font-size: 13px;
   line-height: 1.25;
 }
 
 .notice {
   margin: 0;
-  padding: 12px 14px;
-  border-radius: 16px;
-  font-size: 12px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 11px;
   line-height: 1.45;
   background: rgba(31, 143, 106, 0.1);
   color: var(--accent-strong);
@@ -416,6 +416,55 @@ select {
 .notice.error {
   background: rgba(217, 75, 98, 0.12);
   color: #9f243f;
+}
+
+.appearance-group {
+  display: grid;
+  gap: 8px;
+}
+
+.appearance-group-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.appearance-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 2px 0;
+}
+
+.color-theme-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.color-picker-group {
+  display: grid;
+  gap: 6px;
+}
+
+.color-picker-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.color-picker-row input[type='color'] {
+  width: 36px;
+  height: 26px;
+  padding: 2px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card-strong);
+  cursor: pointer;
+  flex-shrink: 0;
 }
 
 @keyframes rotate {
