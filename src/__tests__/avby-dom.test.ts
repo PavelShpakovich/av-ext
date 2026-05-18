@@ -196,6 +196,23 @@ describe('banner context', () => {
     expect(badge).not.toBeNull();
     expect(badge!.closest('[class*="banner"]')).not.toBeNull();
   });
+
+  it('restores a visible border when banner mode is switched from text to outline', () => {
+    document.body.innerHTML = `
+      <div class="promo-banner">
+        <div class="listing-price">28 158 р.</div>
+      </div>
+    `;
+
+    decoratePrices(document, rate, true, DEFAULT_BADGE_APPEARANCE, {
+      ...DEFAULT_BANNER_APPEARANCE,
+      mode: 'outline',
+    });
+
+    const style = document.getElementById('avby-currency-helper-style');
+    expect(style?.textContent).toContain('border: 1.5px solid rgba(255, 255, 255, 0.7);');
+    expect(style?.textContent).toContain('padding: 0 2px;');
+  });
 });
 
 // ── currency converter rejection ────────────────────────────────────

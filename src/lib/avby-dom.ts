@@ -28,7 +28,8 @@ function buildBadgeModeStyles(cls: string, app: BadgeAppearance, theme: 'light' 
     return `
     .${cls} {
       background: transparent;
-      border-color: ${hexToRgba(backgroundColor, 0.7)};
+      border: 1.5px solid ${hexToRgba(backgroundColor, 0.7)};
+      padding: 0 2px;
       color: ${textColor};
     }`;
   }
@@ -38,7 +39,8 @@ function buildBadgeModeStyles(cls: string, app: BadgeAppearance, theme: 'light' 
   return `
     .${cls} {
       background: ${hexToRgba(backgroundColor, bgAlpha)};
-      border-color: ${hexToRgba(backgroundColor, borderAlpha)};
+      border: 1.5px solid ${hexToRgba(backgroundColor, borderAlpha)};
+      padding: 0 2px;
       color: ${textColor};
     }`;
 }
@@ -67,7 +69,8 @@ function buildBannerModeStyles(cls: string, app: BadgeAppearance, theme: 'light'
     return `
     ${selectors} {
       background: transparent;
-      border-color: ${hexToRgba(backgroundColor, 0.7)};
+      border: 1.5px solid ${hexToRgba(backgroundColor, 0.7)};
+      padding: 0 2px;
       color: ${textColor};
       margin-right: 8px;
     }`;
@@ -77,7 +80,8 @@ function buildBannerModeStyles(cls: string, app: BadgeAppearance, theme: 'light'
     ${selectors} {
       color: ${textColor};
       background: ${hexToRgba(backgroundColor, 0.22)};
-      border-color: ${hexToRgba(backgroundColor, 0.5)};
+      border: 1.5px solid ${hexToRgba(backgroundColor, 0.5)};
+      padding: 0 2px;
       margin-right: 8px;
     }`;
 }
@@ -178,7 +182,7 @@ function ensureInjectedStyle(doc: Document, badgeApp: BadgeAppearance, bannerApp
       display: block;
       width: fit-content;
       margin-top: 4px;
-      padding: 2px 8px;
+      padding: 0 2px;
       border-radius: 4px;
       border: 1.5px solid transparent;
       font-size: 0.75em;
