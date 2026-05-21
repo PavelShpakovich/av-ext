@@ -1,4 +1,4 @@
-import { DEFAULT_SETTINGS } from './constants';
+import { ALL_SITE_TAB_PATTERNS, DEFAULT_SETTINGS } from './constants';
 import { Storage } from './storage';
 import { fetchRateSnapshot, getActiveRate } from './lib/rates/service';
 import { MessageActionType } from './types';
@@ -14,7 +14,9 @@ type ControllerDeps = {
   fetchImpl?: typeof fetch;
 };
 
-const AVBY_TAB_PATTERNS = ['https://cars.av.by/*', 'https://av.by/*', 'https://*.av.by/*'];
+function hasEnabledSites(settings: UserSettings): boolean {
+  return Object.values(settings.enabledSites).some(Boolean);
+}
 
 export function createBackgroundController(deps: ControllerDeps = {}) {
   const browserApi = deps.browserApi ?? browser;
@@ -29,8 +31,9 @@ export function createBackgroundController(deps: ControllerDeps = {}) {
   }
 
   async function updateBadge(): Promise<void> {
-    await browserApi.action.setBadgeText({ text: settings.enabled ? 'BYN' : '' });
-    if (settings.enabled) {
+    const enabled = hasEnabledSites(settings);
+    await browserApi.action.setBadgeText({ text: enabled ? 'BYN' : '' });
+    if (enabled) {
       await browserApi.action.setBadgeBackgroundColor({ color: '#5d8f2e' });
     }
   }
@@ -69,6 +72,10 @@ export function createBackgroundController(deps: ControllerDeps = {}) {
     settings = {
       ...settings,
       ...partial,
+      enabledSites: {
+        ...settings.enabledSites,
+        ...(partial.enabledSites ?? {}),
+      },
     };
 
     if (settings.selectedRateSourceType === 'nbrb') {
@@ -82,7 +89,7 @@ export function createBackgroundController(deps: ControllerDeps = {}) {
   }
 
   async function notifyTabs(): Promise<void> {
-    const tabs = await browserApi.tabs.query({ url: AVBY_TAB_PATTERNS });
+    const tabs = await browserApi.tabs.query({ url: ALL_SITE_TAB_PATTERNS });
 
     await Promise.allSettled(
       tabs
@@ -98,7 +105,7 @@ export function createBackgroundController(deps: ControllerDeps = {}) {
       return await getSelectedRate();
     } catch (error) {
       if (silent) {
-        console.warn('[AVBY Currency Helper] Rate refresh failed', error);
+        console.warn('[BYN to USD Marketplace Helper] Rate refresh failed', error);
         return null;
       }
 

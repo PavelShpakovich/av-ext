@@ -2,10 +2,7 @@ import type { ActiveRate, RateSnapshot, UserSettings } from '../../types';
 import { fetchNbrbRate } from './nbrb';
 import { fetchMyfinBanks } from './myfin';
 
-export async function fetchRateSnapshot(
-  fetchImpl: typeof fetch = fetch,
-  ttlMs = 15 * 60_000,
-): Promise<RateSnapshot> {
+export async function fetchRateSnapshot(fetchImpl: typeof fetch = fetch, ttlMs = 15 * 60_000): Promise<RateSnapshot> {
   const fetchedAt = new Date().toISOString();
   const issues: string[] = [];
   let officialRate: number | null = null;
@@ -42,10 +39,6 @@ export async function fetchRateSnapshot(
 }
 
 export function getActiveRate(settings: UserSettings, snapshot: RateSnapshot, now = Date.now()): ActiveRate | null {
-  if (!settings.enabled) {
-    return null;
-  }
-
   if (settings.selectedRateSourceType === 'bank' && settings.selectedBankAlias) {
     const bank = snapshot.banks.find((entry) => entry.alias === settings.selectedBankAlias);
     if (bank) {

@@ -4,17 +4,17 @@
 
 ## Русская версия
 
-### AV.BY Цены в долларах
+### AV.BY | Kufar: цены в USD
 
-Расширение AV.BY Цены в долларах не собирает, не хранит и не продаёт персональные данные пользователей.
+Расширение AV.BY | Kufar: цены в USD не собирает, не хранит и не продаёт персональные данные пользователей.
 
-Расширение локально обрабатывает содержимое страниц av.by только для того, чтобы находить цены в BYN и показывать рядом примерные значения в USD.
+Расширение локально обрабатывает содержимое поддерживаемых страниц маркетплейсов, таких как av.by и kufar.by, только для того, чтобы находить цены в BYN и показывать рядом примерные значения в USD.
 
 ### Какие данные использует расширение
 
 Расширение использует только минимальный объём данных, необходимый для основной функциональности:
 
-- содержимое страниц av.by, которое обрабатывается локально в браузере для поиска цен в BYN и отображения значений в USD
+- содержимое страниц поддерживаемых маркетплейсов, таких как av.by и kufar.by, которое обрабатывается локально в браузере для поиска цен в BYN и отображения значений в USD
 - локальные настройки расширения, которые сохраняются в браузере, например:
   - выбранный источник курса
   - выбранный банк
@@ -55,17 +55,17 @@
 
 ## English Version
 
-### AV.BY Prices in USD
+### Kufar and av.by: prices in USD
 
-AV.BY Prices in USD does not collect, store, or sell users' personal data.
+Kufar and av.by: prices in USD does not collect, store, or sell users' personal data.
 
-The extension processes av.by page content locally in the browser only to detect prices in BYN and display approximate values in USD next to them.
+The extension processes supported marketplace page content, such as av.by and kufar.by, locally in the browser only to detect prices in BYN and display approximate values in USD next to them.
 
 ### What data the extension uses
 
 The extension uses only the minimum data required for its core functionality:
 
-- website content on av.by pages, processed locally in the browser to find BYN prices and show USD conversions
+- website content on supported marketplace pages, such as av.by and kufar.by, processed locally in the browser to find BYN prices and show USD conversions
 - local extension settings stored in browser storage, such as:
   - selected exchange rate source
   - selected bank

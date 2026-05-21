@@ -1,5 +1,7 @@
 export type RateSourceType = 'nbrb' | 'bank';
 
+export type SupportedSite = 'avby' | 'kufar';
+
 export type BadgeDisplayMode = 'badge' | 'outline' | 'text';
 
 export interface BadgeThemeColors {
@@ -11,6 +13,11 @@ export interface BadgeAppearance {
   mode: BadgeDisplayMode;
   light: BadgeThemeColors;
   dark: BadgeThemeColors;
+}
+
+export interface SiteAppearanceSettings {
+  badgeAppearance: BadgeAppearance;
+  bannerAppearance: BadgeAppearance;
 }
 
 export interface BankRate {
@@ -30,14 +37,16 @@ export interface RateSnapshot {
   issues: string[];
 }
 
+export type EnabledSites = Record<SupportedSite, boolean>;
+export type SiteAppearanceMap = Record<SupportedSite, SiteAppearanceSettings>;
+
 export interface UserSettings {
-  enabled: boolean;
+  enabledSites: EnabledSites;
   selectedRateSourceType: RateSourceType;
   selectedBankAlias: string | null;
   cacheTtlMs: number;
   roundToWholeByn: boolean;
-  badgeAppearance: BadgeAppearance;
-  bannerAppearance: BadgeAppearance;
+  siteAppearances: SiteAppearanceMap;
 }
 
 export interface ActiveRate {

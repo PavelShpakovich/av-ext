@@ -1,5 +1,5 @@
 import { avbySampleHtml } from './fixtures/avby-sample';
-import { clearInjectedPrices, decoratePrices, parseBynAmount } from '../lib/avby-dom';
+import { clearInjectedPrices, decoratePrices, parseBynAmount } from '../lib/marketplace-dom';
 import { DEFAULT_BADGE_APPEARANCE, DEFAULT_BANNER_APPEARANCE } from '../constants';
 import type { ActiveRate } from '../types';
 
@@ -24,6 +24,10 @@ beforeEach(() => {
 // ── parseBynAmount ──────────────────────────────────────────────────
 
 describe('parseBynAmount', () => {
+  it('parses single-digit prices with р.', () => {
+    expect(parseBynAmount('5 р.')).toBe(5);
+  });
+
   it('parses prices with р.', () => {
     expect(parseBynAmount('28 158 р.')).toBe(28158);
   });
@@ -59,21 +63,21 @@ describe('av.by classic', () => {
   it('decorates h1.card-price and div.listing-price', () => {
     document.body.innerHTML = avbySampleHtml;
     expect(dp(document, true)).toBe(2);
-    expect(document.querySelectorAll('.avby-currency-helper-badge')).toHaveLength(2);
+    expect(document.querySelectorAll('.marketplace-currency-helper-badge')).toHaveLength(2);
   });
 
   it('does not duplicate on re-run', () => {
     document.body.innerHTML = avbySampleHtml;
     dp(document, true);
     expect(dp(document, true)).toBe(0);
-    expect(document.querySelectorAll('.avby-currency-helper-badge')).toHaveLength(2);
+    expect(document.querySelectorAll('.marketplace-currency-helper-badge')).toHaveLength(2);
   });
 
   it('clears all injected elements', () => {
     document.body.innerHTML = avbySampleHtml;
     dp(document, true);
     clearInjectedPrices(document);
-    expect(document.querySelectorAll('.avby-currency-helper-badge')).toHaveLength(0);
+    expect(document.querySelectorAll('.marketplace-currency-helper-badge')).toHaveLength(0);
   });
 });
 
@@ -96,7 +100,7 @@ describe('salon.av.by main page — salon-listing-top', () => {
       </a>
     `;
     expect(dp(document, true)).toBe(1);
-    expect(document.querySelector('.salon-listing-top__prices > .avby-currency-helper-badge')).not.toBeNull();
+    expect(document.querySelector('.salon-listing-top__prices > .marketplace-currency-helper-badge')).not.toBeNull();
   });
 });
 
@@ -120,7 +124,9 @@ describe('salon.av.by model listing — salon-listing-items', () => {
       </div>
     `;
     expect(dp(document, true)).toBe(1);
-    expect(document.querySelector('.salon-listing-items__item-price-byn > .avby-currency-helper-badge')).not.toBeNull();
+    expect(
+      document.querySelector('.salon-listing-items__item-price-byn > .marketplace-currency-helper-badge'),
+    ).not.toBeNull();
   });
 
   it('decorates salon-listing-items__item-price-byn with Latin p.', () => {
@@ -140,7 +146,9 @@ describe('salon.av.by model listing — salon-listing-items', () => {
       </div>
     `;
     expect(dp(document, true)).toBe(1);
-    expect(document.querySelector('.salon-listing-items__item-price-byn > .avby-currency-helper-badge')).not.toBeNull();
+    expect(
+      document.querySelector('.salon-listing-items__item-price-byn > .marketplace-currency-helper-badge'),
+    ).not.toBeNull();
   });
 });
 
@@ -160,7 +168,9 @@ describe('salon.av.by tile listing — salon-listing-tile', () => {
       </div>
     `;
     expect(dp(document, true)).toBe(1);
-    expect(document.querySelector('.salon-listing-tile__item-price > .avby-currency-helper-badge')).not.toBeNull();
+    expect(
+      document.querySelector('.salon-listing-tile__item-price > .marketplace-currency-helper-badge'),
+    ).not.toBeNull();
   });
 });
 
@@ -177,7 +187,7 @@ describe('salon.av.by detail page — listing-item__price-primary', () => {
       </div>
     `;
     expect(dp(document, true)).toBe(1);
-    expect(document.querySelector('.listing-item__price-primary > .avby-currency-helper-badge')).not.toBeNull();
+    expect(document.querySelector('.listing-item__price-primary > .marketplace-currency-helper-badge')).not.toBeNull();
   });
 });
 
@@ -192,7 +202,7 @@ describe('banner context', () => {
     `;
     expect(dp(document, true)).toBe(1);
     // Badge should exist inside the banner ancestor
-    const badge = document.querySelector('.avby-currency-helper-badge');
+    const badge = document.querySelector('.marketplace-currency-helper-badge');
     expect(badge).not.toBeNull();
     expect(badge!.closest('[class*="banner"]')).not.toBeNull();
   });
@@ -209,7 +219,7 @@ describe('banner context', () => {
       mode: 'outline',
     });
 
-    const style = document.getElementById('avby-currency-helper-style');
+    const style = document.getElementById('marketplace-currency-helper-style');
     expect(style?.textContent).toContain('border: 1.5px solid rgba(255, 255, 255, 0.7);');
     expect(style?.textContent).toContain('padding: 0 2px;');
   });
@@ -226,6 +236,42 @@ describe('currency converter rejection', () => {
     expect(dp(document, true)).toBe(1);
     expect(document.body.textContent).not.toContain('≈ $1');
   });
+
+  it('does not decorate a BYN price block when the same row already contains a USD price', () => {
+    document.body.innerHTML = `
+      <div class="styles_price__anAen">
+        <span class="styles_price__byr__Hb0aM">82 731 р.</span>
+        <span class="styles_price__usd__yt_dQ">30 300 $ *</span>
+      </div>
+    `;
+
+    expect(dp(document, true)).toBe(0);
+    expect(document.querySelectorAll('.marketplace-currency-helper-badge')).toHaveLength(0);
+  });
+
+  it('does not decorate a BYN price block when the same row already contains USD and EUR prices', () => {
+    document.body.innerHTML = `
+      <div class="styles_price__trwIH">
+        <span class="styles_price__byr__Hb0aM">372 542 р.</span>
+        <span class="styles_price__usd__yt_dQ">136 442 $ *</span>
+        <span>1600 € / м²</span>
+      </div>
+    `;
+
+    expect(dp(document, true)).toBe(0);
+    expect(document.querySelectorAll('.marketplace-currency-helper-badge')).toHaveLength(0);
+  });
+
+  it('decorates single-digit marketplace prices', () => {
+    document.body.innerHTML = `
+      <div class="styles_container__UXAYL styles_brief_wrapper__price__Glf07">
+        <span class="styles_main__eFbJH">5 р.</span>
+      </div>
+    `;
+
+    expect(dp(document, true)).toBe(1);
+    expect(document.querySelectorAll('.marketplace-currency-helper-badge')).toHaveLength(1);
+  });
 });
 
 // ── re-injection after framework removal ────────────────────────────
@@ -240,15 +286,15 @@ describe('re-injection after framework removal', () => {
     `;
 
     dp(document, true);
-    expect(document.querySelectorAll('.avby-currency-helper-badge')).toHaveLength(1);
+    expect(document.querySelectorAll('.marketplace-currency-helper-badge')).toHaveLength(1);
 
     // Simulate framework removing our badge
-    document.querySelector('.avby-currency-helper-badge')!.remove();
-    expect(document.querySelectorAll('.avby-currency-helper-badge')).toHaveLength(0);
+    document.querySelector('.marketplace-currency-helper-badge')!.remove();
+    expect(document.querySelectorAll('.marketplace-currency-helper-badge')).toHaveLength(0);
 
     // Must re-inject
     expect(dp(document, true)).toBe(1);
-    expect(document.querySelectorAll('.avby-currency-helper-badge')).toHaveLength(1);
+    expect(document.querySelectorAll('.marketplace-currency-helper-badge')).toHaveLength(1);
   });
 });
 
@@ -273,6 +319,6 @@ describe('full page with multiple price types', () => {
       </main>
     `;
     expect(dp(document, true)).toBe(4);
-    expect(document.querySelectorAll('.avby-currency-helper-badge')).toHaveLength(4);
+    expect(document.querySelectorAll('.marketplace-currency-helper-badge')).toHaveLength(4);
   });
 });

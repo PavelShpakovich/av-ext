@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { SITE_LABELS } from '../../constants';
 import { MessageActionType } from '../../types';
 import { formatUpdatedAt } from '../../lib/format';
 import type {
@@ -8,6 +9,7 @@ import type {
   BankRate,
   MessageAction,
   MessageResponse,
+  SupportedSite,
   UserSettings,
 } from '../../types';
 
@@ -24,6 +26,8 @@ const DISPLAY_MODE_LABELS: Record<BadgeDisplayMode, string> = {
   outline: 'Контур (рамка + текст)',
   text: 'Только текст',
 };
+
+const SITE_ORDER = ['avby', 'kufar'] as const satisfies SupportedSite[];
 
 interface AppearanceSectionProps {
   label: string;
@@ -105,6 +109,7 @@ export default function App() {
   const [settings, setSettings] = useState<UserSettings | null>(null);
   const [banks, setBanks] = useState<BankRate[]>([]);
   const [activeRate, setActiveRate] = useState<ActiveRate | null>(null);
+  const [activeAppearanceSite, setActiveAppearanceSite] = useState<SupportedSite>('avby');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -158,31 +163,57 @@ export default function App() {
     );
   }
 
+  const enabledSitesCount = Object.values(settings.enabledSites).filter(Boolean).length;
+  const appearanceSettings = settings.siteAppearances[activeAppearanceSite];
+
+  const updateSiteAppearance = (
+    site: SupportedSite,
+    patch: Partial<UserSettings['siteAppearances'][SupportedSite]>,
+  ) => {
+    saveSettings({
+      siteAppearances: {
+        ...settings.siteAppearances,
+        [site]: {
+          ...settings.siteAppearances[site],
+          ...patch,
+        },
+      },
+    });
+  };
+
   return (
     <main className='popup-shell'>
       <section className='hero-card'>
         <div className='hero-copy'>
-          <p className='eyebrow'>AV.BY helper</p>
-          <h1>Цены в долларах без калькулятора</h1>
+          <h1>AV.BY | Kufar: цены в USD</h1>
         </div>
 
         <div className='hero-aside'>
-          <label className='toggle-card'>
-            <span className='toggle-copy'>
-              <strong>Показывать USD на av.by</strong>
-              <small>Автообновление курсов каждые 10 минут</small>
-            </span>
-            <span className='toggle-control'>
-              <input
-                type='checkbox'
-                checked={settings.enabled}
-                onChange={(event) => saveSettings({ enabled: event.target.checked })}
-              />
-              <span className='toggle-track' aria-hidden='true'>
-                <span className='toggle-thumb' />
+          {SITE_ORDER.map((site) => (
+            <label className='toggle-card' key={site}>
+              <span className='toggle-copy'>
+                <strong>Показывать USD на {SITE_LABELS[site]}</strong>
+                <small>{site === 'avby' ? 'Автомобили и салонные объявления' : 'Объявления и вертикали Kufar'}</small>
               </span>
-            </span>
-          </label>
+              <span className='toggle-control'>
+                <input
+                  type='checkbox'
+                  checked={settings.enabledSites[site]}
+                  onChange={(event) =>
+                    saveSettings({
+                      enabledSites: {
+                        ...settings.enabledSites,
+                        [site]: event.target.checked,
+                      },
+                    })
+                  }
+                />
+                <span className='toggle-track' aria-hidden='true'>
+                  <span className='toggle-thumb' />
+                </span>
+              </span>
+            </label>
+          ))}
         </div>
       </section>
 
@@ -254,22 +285,39 @@ export default function App() {
         <div className='panel-heading'>
           <div>
             <p className='section-kicker'>Оформление</p>
-            <h2>Внешний вид значка</h2>
+            <h2>Внешний вид</h2>
           </div>
         </div>
 
+        <div className='site-tabs' role='tablist' aria-label='Настройки цвета по площадкам'>
+          {SITE_ORDER.map((site) => (
+            <button
+              key={site}
+              type='button'
+              role='tab'
+              className={`site-tab${activeAppearanceSite === site ? ' is-active' : ''}`}
+              aria-selected={activeAppearanceSite === site}
+              onClick={() => setActiveAppearanceSite(site)}
+            >
+              {SITE_LABELS[site]}
+            </button>
+          ))}
+        </div>
+
+        <p className='notice'>Цвета настраиваются отдельно для каждой площадки во вкладках выше.</p>
+
         <AppearanceSection
-          label='Обычный значок'
-          value={settings.badgeAppearance}
-          onChange={(next) => saveSettings({ badgeAppearance: next })}
+          label={`Обычный значок · ${SITE_LABELS[activeAppearanceSite]}`}
+          value={appearanceSettings.badgeAppearance}
+          onChange={(next) => updateSiteAppearance(activeAppearanceSite, { badgeAppearance: next })}
         />
 
         <div className='appearance-divider' />
 
         <AppearanceSection
-          label='Значок на баннерах'
-          value={settings.bannerAppearance}
-          onChange={(next) => saveSettings({ bannerAppearance: next })}
+          label={`Значок на баннерах · ${SITE_LABELS[activeAppearanceSite]}`}
+          value={appearanceSettings.bannerAppearance}
+          onChange={(next) => updateSiteAppearance(activeAppearanceSite, { bannerAppearance: next })}
         />
       </section>
 
@@ -281,6 +329,11 @@ export default function App() {
           </div>
           <span className='live-dot'>auto</span>
         </div>
+
+        <p className='notice'>
+          Активных площадок: {enabledSitesCount} из {SITE_ORDER.length}. Если на странице уже есть цена в долларах,
+          расширение пропустит такой блок.
+        </p>
 
         <div className='highlight-rate'>
           <span className='highlight-label'>Текущий курс</span>

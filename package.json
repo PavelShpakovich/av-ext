@@ -1,8 +1,8 @@
 {
-  "name": "avby-currency-ext",
-  "version": "0.2.5",
+  "name": "byn-usd-marketplace-helper",
+  "version": "1.0.0",
   "private": true,
-  "description": "Chrome extension that shows BYN prices on av.by next to USD listings using NBRB or selected Belarus bank rates.",
+  "description": "USD price converter for Kufar and av.by. Shows BYN to USD prices on listing and item pages using NBRB or bank rates.",
   "scripts": {
     "dev": "wxt",
     "build": "wxt build --browser chrome",

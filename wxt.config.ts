@@ -6,11 +6,19 @@ export default defineConfig({
   outDir: 'build',
   manifestVersion: 3,
   manifest: {
-    name: 'AV.BY Цены в долларах',
-    description: 'Показывает цены в долларах рядом с суммами в BYN на av.by по курсу НБРБ или выбранного банка.',
-    version: '0.2.5',
+    name: 'AV.BY | Kufar: цены в USD',
+    description:
+      'Показывает цены в USD рядом с BYN на Kufar и av.by. Конвертер по курсу НБРБ или банка для объявлений и карточек.',
+    version: '1.0.0',
     permissions: ['storage', 'tabs', 'alarms'],
-    host_permissions: ['https://*.av.by/*', 'https://api.nbrb.by/*', 'https://myfin.by/*'],
+    host_permissions: [
+      'https://av.by/*',
+      'https://*.av.by/*',
+      'https://kufar.by/*',
+      'https://*.kufar.by/*',
+      'https://api.nbrb.by/*',
+      'https://myfin.by/*',
+    ],
     icons: {
       16: 'icon-16.png',
       32: 'icon-32.png',
@@ -18,7 +26,7 @@ export default defineConfig({
       128: 'icon-128.png',
     },
     action: {
-      default_title: 'AV.BY Цены в долларах',
+      default_title: 'AV.BY | Kufar: цены в USD',
       default_popup: 'popup.html',
       default_icon: {
         16: 'icon-16.png',

@@ -33,7 +33,6 @@ function buildBadgeModeStyles(cls: string, app: BadgeAppearance, theme: 'light' 
       color: ${textColor};
     }`;
   }
-  // badge (default)
   const bgAlpha = theme === 'dark' ? 0.55 : 0.14;
   const borderAlpha = theme === 'dark' ? 0.55 : 0.45;
   return `
@@ -75,7 +74,6 @@ function buildBannerModeStyles(cls: string, app: BadgeAppearance, theme: 'light'
       margin-right: 8px;
     }`;
   }
-  // badge
   return `
     ${selectors} {
       color: ${textColor};
@@ -86,20 +84,28 @@ function buildBannerModeStyles(cls: string, app: BadgeAppearance, theme: 'light'
     }`;
 }
 
-/**
- * BYN price regex:
- * - Requires at least 2 digits (to avoid matching single-digit numbers)
- * - Number may contain spaces (thousand separators)
- * - Must be followed by a BYN unit (р. руб. BYN br)
- * - Must NOT be preceded by a decimal separator (to skip exchange rates like "2.82 BYN")
- */
-const BYN_PRICE_RE = /(?:^|[^\d.,])((?:\d{1,3}(?: \d{3})+|\d{2,}))\s*(?:[рp]\.?|руб\.?|byn|br)(?=$|[\s),.;:!?])/i;
+const BYN_PRICE_RE = /(?:^|[^\d.,])((?:\d{1,3}(?: \d{3})+|\d+))\s*(?:[рp]\.?|руб\.?|byn|br)(?=$|[\s),.;:!?])/i;
+const FOREIGN_CURRENCY_RE = /(?:\$|usd\b|дол(?:лар|\.)?|€|eur\b)/i;
 
 function normalizeSpaces(value: string): string {
   return value
     .replace(/[\u00A0\u202F]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
+}
+
+function getScopeText(scope: HTMLElement): string {
+  if (!scope.querySelector(`.${INJECTED_BADGE_CLASS}`)) {
+    return normalizeSpaces(scope.textContent ?? '');
+  }
+
+  const clone = scope.cloneNode(true);
+  if (clone instanceof HTMLElement) {
+    clone.querySelectorAll(`.${INJECTED_BADGE_CLASS}`).forEach((node) => node.remove());
+    return normalizeSpaces(clone.textContent ?? '');
+  }
+
+  return normalizeSpaces(scope.textContent ?? '');
 }
 
 export function parseBynAmount(text: string): number | null {
@@ -115,12 +121,6 @@ export function parseBynAmount(text: string): number | null {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
-/**
- * Walk the DOM and find the smallest elements whose combined textContent
- * contains a BYN price. This is intentionally simple and greedy:
- * it walks ALL text nodes (not just those matching CSS selectors),
- * so it works with any markup structure.
- */
 export function findPriceHosts(root: ParentNode = document): HTMLElement[] {
   const doc = root instanceof Document ? root : root.ownerDocument;
   if (!doc) return [];
@@ -131,19 +131,15 @@ export function findPriceHosts(root: ParentNode = document): HTMLElement[] {
   let node = walker.nextNode();
   while (node) {
     const text = node.textContent ?? '';
-    // Only start checking if this text node contains digits
     if (/\d/.test(text)) {
-      // Walk up to find the smallest ancestor whose textContent is a valid BYN price
       let el = node.parentElement;
       while (el && el !== root && el !== doc.documentElement) {
-        // Skip our own injected elements
         if (el.classList.contains(INJECTED_BADGE_CLASS)) break;
 
         const elText = normalizeSpaces(el.textContent ?? '');
-        if (elText.length > 300) break; // too big, stop climbing
+        if (elText.length > 300) break;
 
         if (parseBynAmount(elText) !== null) {
-          // Check this element doesn't have a child that ALSO independently matches
           const hasChildHost = Array.from(el.children).some((child) => {
             if (!(child instanceof HTMLElement)) return false;
             if (child.classList.contains(INJECTED_BADGE_CLASS)) return false;
@@ -151,7 +147,6 @@ export function findPriceHosts(root: ParentNode = document): HTMLElement[] {
           });
 
           if (hasChildHost) {
-            // A child already independently matches — skip this ancestor
             break;
           }
 
@@ -165,6 +160,31 @@ export function findPriceHosts(root: ParentNode = document): HTMLElement[] {
   }
 
   return Array.from(hosts);
+}
+
+function hasExistingForeignCurrencyNearHost(element: HTMLElement, bynAmount: number): boolean {
+  const parent = element.parentElement;
+  const shouldInspectSiblings = Boolean(parent && !['BODY', 'HTML'].includes(parent.tagName));
+  const siblingScopes = shouldInspectSiblings
+    ? Array.from(parent?.children ?? []).filter(
+        (scope): scope is HTMLElement =>
+          scope instanceof HTMLElement && scope !== element && !scope.classList.contains(INJECTED_BADGE_CLASS),
+      )
+    : [];
+  const scopes = [element, ...siblingScopes];
+
+  return scopes.some((scope) => {
+    const text = getScopeText(scope);
+    if (!text || text.length > 80) {
+      return false;
+    }
+
+    if (scope === element) {
+      return parseBynAmount(text) === bynAmount && FOREIGN_CURRENCY_RE.test(text);
+    }
+
+    return FOREIGN_CURRENCY_RE.test(text);
+  });
 }
 
 function ensureInjectedStyle(doc: Document, badgeApp: BadgeAppearance, bannerApp: BadgeAppearance): void {
@@ -238,10 +258,10 @@ export function decoratePrices(
   findPriceHosts(root).forEach((element) => {
     const bynAmount = parseBynAmount(element.textContent ?? '');
     if (bynAmount === null) return;
+    if (hasExistingForeignCurrencyNearHost(element, bynAmount)) return;
 
     const computedKey = `${bynAmount}-${activeRate.value}-${roundToWholeByn ? 'round' : 'precise'}`;
 
-    // Check for existing badge as child or next sibling
     const childBadge = Array.from(element.children).find(
       (c): c is HTMLElement => c instanceof HTMLElement && c.classList.contains(INJECTED_BADGE_CLASS),
     );

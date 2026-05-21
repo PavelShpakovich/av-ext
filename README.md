@@ -1,13 +1,14 @@
-# AV.BY Currency Helper
+# AV.BY | Kufar: цены в USD
 
-Browser extension for Chrome that adds BYN prices next to USD prices on av.by listings and car detail pages.
+Browser extension for Chrome that shows approximate USD prices next to BYN amounts on Kufar and av.by listings and item pages.
 
 ## Features
 
-- shows converted BYN next to USD prices on av.by
+- shows approximate USD values next to BYN prices on av.by and kufar.by
 - supports official NBRB rate or a selected bank from Myfin
 - caches rates in extension storage and falls back gracefully when Myfin is unavailable
 - updates prices on dynamic page navigation via MutationObserver
+- skips price blocks that already show a USD price on the page
 
 ## Development
 
@@ -28,4 +29,4 @@ Load the unpacked extension from `build/chrome-mv3/`.
 
 - first version targets Chrome and Edge only
 - Myfin parsing depends on current HTML structure
-- av.by DOM selectors may need updates if page markup changes
+- marketplace DOM selectors may need updates if page markup changes

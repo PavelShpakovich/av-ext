@@ -8,7 +8,7 @@ export default defineBackground(() => {
   const controller = createBackgroundController();
 
   controller.initialize().catch((error) => {
-    console.error('[AVBY Currency Helper] Background initialization failed', error);
+    console.error('[BYN to USD Marketplace Helper] Background initialization failed', error);
   });
 
   browser.alarms.onAlarm.addListener((alarm) => {
@@ -17,7 +17,7 @@ export default defineBackground(() => {
     }
 
     controller.refreshRates(true).catch((error) => {
-      console.error('[AVBY Currency Helper] Scheduled refresh failed', error);
+      console.error('[BYN to USD Marketplace Helper] Scheduled refresh failed', error);
     });
   });
 
