@@ -1,6 +1,6 @@
 {
   "name": "byn-usd-marketplace-helper",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "private": true,
   "description": "USD price converter for Kufar and av.by. Shows BYN to USD prices on listing and item pages using NBRB, BVFB trading, or bank rates.",
   "scripts": {

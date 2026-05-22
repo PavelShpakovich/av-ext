@@ -66,6 +66,17 @@ describe('av.by classic', () => {
     expect(document.querySelectorAll('.marketplace-currency-helper-badge')).toHaveLength(2);
   });
 
+  it('increases padding-block for graph items containers', () => {
+    document.body.innerHTML = `
+      <div class="graph__items">
+        <div class="listing-price">28 158 р.</div>
+      </div>
+    `;
+
+    expect(dp(document, true)).toBe(1);
+    expect((document.querySelector('.graph__items') as HTMLElement).style.paddingBlock).toBe('40px');
+  });
+
   it('does not duplicate on re-run', () => {
     document.body.innerHTML = avbySampleHtml;
     dp(document, true);

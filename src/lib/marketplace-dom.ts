@@ -234,6 +234,18 @@ function ensureInjectedStyle(doc: Document, badgeApp: BadgeAppearance, bannerApp
   }
 }
 
+function ensureGraphItemsPadding(root: Document | HTMLElement): void {
+  const scope = root instanceof Document ? root : root.ownerDocument;
+  if (!scope) return;
+
+  const graphItems = scope.querySelectorAll('.graph__items');
+  graphItems.forEach((element) => {
+    if (element instanceof HTMLElement) {
+      element.style.paddingBlock = '40px';
+    }
+  });
+}
+
 export function clearInjectedPrices(root: ParentNode = document): void {
   root.querySelectorAll(`.${INJECTED_BADGE_CLASS}`).forEach((n) => n.remove());
   const doc = root instanceof Document ? root : root instanceof Element ? root.ownerDocument : null;
@@ -253,6 +265,7 @@ export function decoratePrices(
   if (!doc) return 0;
 
   ensureInjectedStyle(doc, badgeApp, bannerApp);
+  ensureGraphItemsPadding(root);
   let injected = 0;
 
   findPriceHosts(root).forEach((element) => {

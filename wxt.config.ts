@@ -8,7 +8,7 @@ export default defineConfig({
   manifest: {
     name: 'AV.BY | Kufar: цены в USD',
     description: 'Показывает цены в USD на av.by и kufar.by по курсу НБРБ, БВФБ или банка.',
-    version: '1.1.0',
+    version: '1.1.1',
     permissions: ['storage', 'tabs', 'alarms'],
     host_permissions: [
       'https://av.by/*',
