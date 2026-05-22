@@ -60,6 +60,8 @@ describe('Storage', () => {
     const snapshot: RateSnapshot = {
       officialRate: 3.1,
       officialUpdatedAt: '2026-04-25T08:00:00.000Z',
+      exchangeRate: null,
+      exchangeUpdatedAt: null,
       banks: [],
       fetchedAt: '2026-04-25T08:05:00.000Z',
       expiresAt: Date.now() + 1_000,
@@ -78,6 +80,8 @@ describe('Storage', () => {
     const snapshot: RateSnapshot = {
       officialRate: 3.2,
       officialUpdatedAt: '2026-04-25T08:00:00.000Z',
+      exchangeRate: 3.15,
+      exchangeUpdatedAt: '2026-04-25T10:00:00+03:00',
       banks: [],
       fetchedAt: '2026-04-25T08:05:00.000Z',
       expiresAt: Date.now() + 1_000,

@@ -152,7 +152,12 @@ export default function App() {
     setActiveRate(nextActiveRate);
   };
 
-  const currentBank = banks.find((bank) => bank.alias === settings?.selectedBankAlias) ?? null;
+  const activeRateKindLabel =
+    activeRate?.sourceType === 'bank'
+      ? 'Продажа банка'
+      : activeRate?.sourceType === 'exchange'
+        ? 'Торги БВФБ'
+        : 'Официальный курс';
 
   if (loading || !settings) {
     return (
@@ -223,7 +228,13 @@ export default function App() {
             <p className='section-kicker'>Настройки конвертации</p>
             <h2>Источник курса</h2>
           </div>
-          <span className='badge-outline'>{settings.selectedRateSourceType === 'nbrb' ? 'НБРБ' : 'Банк'}</span>
+          <span className='badge-outline'>
+            {settings.selectedRateSourceType === 'nbrb'
+              ? 'НБРБ'
+              : settings.selectedRateSourceType === 'exchange'
+                ? 'БВФБ'
+                : 'Банк'}
+          </span>
         </div>
 
         <label className='control-group'>
@@ -240,6 +251,7 @@ export default function App() {
               }
             >
               <option value='nbrb'>Официальный курс НБРБ</option>
+              <option value='exchange'>Средневзвешенный курс торгов БВФБ</option>
               <option value='bank'>Курс продажи банка</option>
             </select>
           </span>
@@ -345,9 +357,7 @@ export default function App() {
           <article className='metric-card'>
             <span>Источник</span>
             <strong>{activeRate?.sourceLabel ?? 'нет данных'}</strong>
-            <small>
-              {settings.selectedRateSourceType === 'bank' && currentBank ? 'Продажа банка' : 'Официальный курс'}
-            </small>
+            <small>{activeRateKindLabel}</small>
           </article>
 
           <article className='metric-card'>
@@ -358,7 +368,7 @@ export default function App() {
         </div>
 
         {activeRate?.fallbackToOfficial ? (
-          <p className='notice'>Выбранный банк недоступен, поэтому используется официальный курс НБРБ.</p>
+          <p className='notice'>Выбранный источник недоступен, поэтому используется официальный курс НБРБ.</p>
         ) : null}
         {activeRate?.stale ? (
           <p className='notice warning'>Показан кэшированный курс. Расширение попробует обновить его автоматически.</p>

@@ -78,7 +78,7 @@ export function createBackgroundController(deps: ControllerDeps = {}) {
       },
     };
 
-    if (settings.selectedRateSourceType === 'nbrb') {
+    if (settings.selectedRateSourceType !== 'bank') {
       settings.selectedBankAlias = null;
     }
 

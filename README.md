@@ -1,11 +1,11 @@
 # AV.BY | Kufar: цены в USD
 
-Browser extension for Chrome that shows approximate USD prices next to BYN amounts on Kufar and av.by listings and item pages.
+Browser extension for Chrome that shows approximate USD prices next to BYN amounts on Kufar and av.by listings and item pages using the official NBRB rate, the BVFB trading rate, or selected bank sell rates.
 
 ## Features
 
 - shows approximate USD values next to BYN prices on av.by and kufar.by
-- supports official NBRB rate or a selected bank from Myfin
+- supports official NBRB rate, BVFB trading rate, or a selected bank from Myfin
 - caches rates in extension storage and falls back gracefully when Myfin is unavailable
 - updates prices on dynamic page navigation via MutationObserver
 - skips price blocks that already show a USD price on the page

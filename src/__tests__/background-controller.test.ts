@@ -1,5 +1,6 @@
 import { createBackgroundController } from '../background-controller';
 import { DEFAULT_SETTINGS } from '../constants';
+import { bvfbSampleHtml } from './fixtures/bvfb-sample';
 import { myfinSampleHtml } from './fixtures/myfin-sample';
 import { MessageActionType } from '../types';
 import type { UserSettings } from '../types';
@@ -30,6 +31,13 @@ describe('background controller', () => {
         return {
           ok: true,
           json: async () => ({ Cur_OfficialRate: 3.1111, Date: '2026-04-25T08:00:00.000Z' }),
+        } as Response;
+      }
+
+      if (url.includes('torgi-na-bvfb')) {
+        return {
+          ok: true,
+          text: async () => bvfbSampleHtml,
         } as Response;
       }
 
@@ -94,6 +102,13 @@ describe('background controller', () => {
         } as Response;
       }
 
+      if (url.includes('torgi-na-bvfb')) {
+        return {
+          ok: true,
+          text: async () => bvfbSampleHtml,
+        } as Response;
+      }
+
       return {
         ok: true,
         text: async () => myfinSampleHtml,
@@ -121,6 +136,65 @@ describe('background controller', () => {
 
     expect(storage.saveSettings).toHaveBeenCalled();
     expect(browserApi.tabs.sendMessage).toHaveBeenCalledWith(12, { action: MessageActionType.ContentRefresh });
+  });
+
+  it('returns BVFB rate when exchange source is selected', async () => {
+    const storage = {
+      getSettings: jest.fn(async () => ({
+        ...DEFAULT_SETTINGS,
+        selectedRateSourceType: 'exchange',
+      })),
+      saveSettings: jest.fn(async () => undefined),
+      getRateSnapshot: jest.fn(async () => null),
+      saveRateSnapshot: jest.fn(async () => undefined),
+      isSnapshotFresh: jest.fn(() => false),
+    };
+
+    const browserApi = {
+      action: {
+        setBadgeText: jest.fn(async () => undefined),
+        setBadgeBackgroundColor: jest.fn(async () => undefined),
+      },
+      tabs: {
+        query: jest.fn(async () => []),
+        sendMessage: jest.fn(async () => undefined),
+      },
+    } as unknown as typeof browser;
+
+    const fetchMock = jest.fn(async (url: string) => {
+      if (url.includes('api.nbrb.by')) {
+        return {
+          ok: true,
+          json: async () => ({ Cur_OfficialRate: 2.7315, Date: '2026-05-22T00:00:00.000Z' }),
+        } as Response;
+      }
+
+      if (url.includes('torgi-na-bvfb')) {
+        return {
+          ok: true,
+          text: async () => bvfbSampleHtml,
+        } as Response;
+      }
+
+      return {
+        ok: true,
+        text: async () => myfinSampleHtml,
+      } as Response;
+    });
+
+    const controller = createBackgroundController({
+      browserApi,
+      storage: storage as never,
+      fetchImpl: fetchMock as unknown as typeof fetch,
+    });
+
+    await controller.initialize();
+
+    const selectedRateResponse = await controller.handleMessage({ action: MessageActionType.GetActiveRate });
+    expect(selectedRateResponse).toMatchObject({
+      success: true,
+      data: expect.objectContaining({ value: 2.7506, sourceType: 'exchange', sourceLabel: 'БВФБ' }),
+    });
   });
 
   it('keeps the active rate available even when all sites are disabled', async () => {
@@ -154,6 +228,13 @@ describe('background controller', () => {
         return {
           ok: true,
           json: async () => ({ Cur_OfficialRate: 3.1111, Date: '2026-04-25T08:00:00.000Z' }),
+        } as Response;
+      }
+
+      if (url.includes('torgi-na-bvfb')) {
+        return {
+          ok: true,
+          text: async () => bvfbSampleHtml,
         } as Response;
       }
 

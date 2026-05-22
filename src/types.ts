@@ -1,4 +1,4 @@
-export type RateSourceType = 'nbrb' | 'bank';
+export type RateSourceType = 'nbrb' | 'bank' | 'exchange';
 
 export type SupportedSite = 'avby' | 'kufar';
 
@@ -30,6 +30,8 @@ export interface BankRate {
 export interface RateSnapshot {
   officialRate: number | null;
   officialUpdatedAt: string | null;
+  exchangeRate: number | null;
+  exchangeUpdatedAt: string | null;
   banks: BankRate[];
   fetchedAt: string;
   expiresAt: number;
